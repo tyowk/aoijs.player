@@ -1,0 +1,26 @@
+{
+    "name": "aoijs.player",
+    "version": "1.0.0",
+    "main": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "format": "biome format src --write",
+        "lint": "biome lint src",
+        "dev": "node dist/examples"
+    },
+    "author": "Tyowk <tyowk@outlook.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
+        "aoi.js": "^6.9.0",
+        "discord-player-youtubei": "^1.4.1",
+        "dotenv": "^16.4.7",
+        "ffmpeg-static": "^5.2.0",
+        "typescript": "^5.7.3"
+    },
+    "dependencies": {
+        "@discord-player/extractor": "^7.1.0",
+        "discord-player": "^7.1.0"
+    }
+}
