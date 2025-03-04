@@ -17,6 +17,7 @@ export class Functions {
         description: string;
         type: ArgType;
         required: boolean;
+        rest: boolean;
     }[];
 
     #aoiError: any;
@@ -47,15 +48,25 @@ export class Functions {
             let arg = args[i] ?? '';
             const field = this.fields[i] ?? {};
             if (field.required && (!arg || arg === '')) {
-                return this.error(`Missing argument ${field.name} in function ${this.name}!`, data);
+                return this.error(`Missing argument \`${field.name}\` in function \`${this.name}\`!`, data);
+            }
+
+            if (args.length > this.fields.length) {
+                args.splice(this.fields.length);
+            }
+
+            if (field.rest) {
+                const [...rest] = args.splice(i, this.fields.length - i);
+                if (rest.length) {
+                    arg = rest.join(';');
+                }
             }
 
             arg = this.#ArgType(arg, field.type);
             args[i] = arg;
         }
 
-        const result = await this.execute(d, args, data);
-        return result;
+        return await this.execute(d, args, data);
     }
 
     public async execute(..._args: any): Promise<object> {
@@ -64,7 +75,14 @@ export class Functions {
 
     public async error(message: string, data?: object) {
         if (!this.#aoiError) return;
-        return this.#aoiError.fnError(this.#d, 'custom', data ?? {}, message);
+        try {
+            return this.#aoiError.fnError(this.#d, 'custom', data ?? {}, message);
+        } catch {
+            console.log(message);
+            return this.#aoiError
+                .fnError(this.#d, 'custom', data ?? {}, 'Something went wrong! Please check the console log!')
+                .catch(Boolean);
+        }
     }
 
     public get name(): string {
@@ -88,6 +106,7 @@ export class Functions {
         description: string;
         type: ArgType;
         required: boolean;
+        rest: boolean;
     }[] {
         return this.#fields;
     }

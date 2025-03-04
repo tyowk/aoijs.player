@@ -1,5 +1,5 @@
 import { AoiClient } from 'aoi.js';
-import { Manager } from '../src';
+import { Manager, GuildQueueEvents } from '../src';
 import { YoutubeiExtractor } from 'discord-player-youtubei'
 import { DefaultExtractors } from '@discord-player/extractor';
 
@@ -11,9 +11,18 @@ const client = new AoiClient({
     events: ['onMessage', 'onVoiceStateUpdate']
 });
 
-const manager = new Manager(client);
-manager.player.extractors.loadMulti(DefaultExtractors);
-manager.player.extractors.register(YoutubeiExtractor, {});
+const manager = new Manager(client, {
+    includeExtractors: DefaultExtractors,
+    events: [
+        GuildQueueEvents.TrackStart,
+    ]
+}).register(YoutubeiExtractor, {});
+
+manager.command({
+    type: 'trackStart',
+    channel: '$channelId',
+    code: 'Started playing at <#$voiceId>'
+});
 
 // @ts-ignore
 client.command({

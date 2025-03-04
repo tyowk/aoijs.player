@@ -53,7 +53,6 @@ export default class PlayTrack extends Functions {
             ...connectOptions
         };
 
-        let error = false;
         try {
             await player.play(<VoiceBasedChannel>voiceChannel, query.addBrackets(), {
                 nodeOptions: connectionOptionsUnion,
@@ -61,13 +60,11 @@ export default class PlayTrack extends Functions {
                 requestedBy: d.author
             });
         } catch (e: any) {
-            error = true;
             return this.error(`Failed to play track with reason: ${e.message}`, {});
         }
 
         return {
-            code: d.util.setCode(data),
-            error
+            code: d.util.setCode(data)
         };
     }
 }

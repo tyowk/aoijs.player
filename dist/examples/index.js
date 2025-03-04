@@ -11,9 +11,17 @@ const client = new aoi_js_1.AoiClient({
     intents: ['Guilds', 'GuildMessages', 'GuildVoiceStates', 'GuildMembers', 'MessageContent'],
     events: ['onMessage', 'onVoiceStateUpdate']
 });
-const manager = new src_1.Manager(client);
-manager.player.extractors.loadMulti(extractor_1.DefaultExtractors);
-manager.player.extractors.register(discord_player_youtubei_1.YoutubeiExtractor, {});
+const manager = new src_1.Manager(client, {
+    includeExtractors: extractor_1.DefaultExtractors,
+    events: [
+        src_1.GuildQueueEvents.TrackStart,
+    ]
+}).register(discord_player_youtubei_1.YoutubeiExtractor, {});
+manager.command({
+    type: 'trackStart',
+    channel: '$channelId',
+    code: 'Started playing at <#$voiceId>'
+});
 // @ts-ignore
 client.command({
     name: 'play',

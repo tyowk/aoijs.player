@@ -23,10 +23,10 @@ export declare class Commands {
     #private;
     readonly manager: Manager;
     readonly client: Client;
-    readonly events: GuildQueueEvents[];
+    readonly events: string[];
     trackStart?: Collective<number, CommandData>;
     trackEnd?: Collective<number, CommandData>;
     queueEnd?: Collective<number, CommandData>;
-    constructor(manager: Manager, events?: Array<string>);
+    constructor(manager: Manager, events?: string[]);
     add(data: CommandData): Commands;
 }

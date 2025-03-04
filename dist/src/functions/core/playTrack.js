@@ -45,7 +45,6 @@ class PlayTrack extends Functions_1.Functions {
             metadata: { text: d.channel },
             ...connectOptions
         };
-        let error = false;
         try {
             await player.play(voiceChannel, query.addBrackets(), {
                 nodeOptions: connectionOptionsUnion,
@@ -54,12 +53,10 @@ class PlayTrack extends Functions_1.Functions {
             });
         }
         catch (e) {
-            error = true;
             return this.error(`Failed to play track with reason: ${e.message}`, {});
         }
         return {
-            code: d.util.setCode(data),
-            error
+            code: d.util.setCode(data)
         };
     }
 }

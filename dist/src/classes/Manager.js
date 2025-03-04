@@ -16,6 +16,7 @@ exports.Manager = void 0;
 const discord_player_1 = require("discord-player");
 const Commands_1 = require("./Commands");
 const Functions_1 = require("../utils/Functions");
+const Events_1 = require("./Events");
 const path = require("node:path");
 const fs = require("node:fs");
 class Manager {
@@ -33,7 +34,16 @@ class Manager {
         if (this.options.includeExtractors) {
             this.player.extractors.loadMulti(this.options.includeExtractors);
         }
+        new Events_1.Events(this);
         __classPrivateFieldGet(this, _Manager_instances, "m", _Manager_loadFunctions).call(this);
+    }
+    command(data) {
+        this.cmd.add(data);
+        return this;
+    }
+    register(extractor, options) {
+        this.player.extractors.register(extractor, options);
+        return this;
     }
     get cmd() {
         return __classPrivateFieldGet(this, _Manager_cmd, "f");

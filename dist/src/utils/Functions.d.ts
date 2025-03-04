@@ -21,5 +21,6 @@ export declare class Functions {
         description: string;
         type: ArgType;
         required: boolean;
+        rest: boolean;
     }[];
 }

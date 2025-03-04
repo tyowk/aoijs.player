@@ -52,13 +52,21 @@ class Functions {
             let arg = args[i] ?? '';
             const field = this.fields[i] ?? {};
             if (field.required && (!arg || arg === '')) {
-                return this.error(`Missing argument ${field.name} in function ${this.name}!`, data);
+                return this.error(`Missing argument \`${field.name}\` in function \`${this.name}\`!`, data);
+            }
+            if (args.length > this.fields.length) {
+                args.splice(this.fields.length);
+            }
+            if (field.rest) {
+                const [...rest] = args.splice(i, this.fields.length - i);
+                if (rest.length) {
+                    arg = rest.join(';');
+                }
             }
             arg = __classPrivateFieldGet(this, _Functions_instances, "m", _Functions_ArgType).call(this, arg, field.type);
             args[i] = arg;
         }
-        const result = await this.execute(d, args, data);
-        return result;
+        return await this.execute(d, args, data);
     }
     async execute(..._args) {
         return Promise.all([]);
@@ -66,7 +74,15 @@ class Functions {
     async error(message, data) {
         if (!__classPrivateFieldGet(this, _Functions_aoiError, "f"))
             return;
-        return __classPrivateFieldGet(this, _Functions_aoiError, "f").fnError(__classPrivateFieldGet(this, _Functions_d, "f"), 'custom', data ?? {}, message);
+        try {
+            return __classPrivateFieldGet(this, _Functions_aoiError, "f").fnError(__classPrivateFieldGet(this, _Functions_d, "f"), 'custom', data ?? {}, message);
+        }
+        catch {
+            console.log(message);
+            return __classPrivateFieldGet(this, _Functions_aoiError, "f")
+                .fnError(__classPrivateFieldGet(this, _Functions_d, "f"), 'custom', data ?? {}, 'Something went wrong! Please check the console log!')
+                .catch(Boolean);
+        }
     }
     get name() {
         return __classPrivateFieldGet(this, _Functions_name, "f");

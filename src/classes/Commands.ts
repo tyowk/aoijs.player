@@ -1,7 +1,7 @@
 import { Collective } from '../utils/Collective';
-import { interpreter } from 'aoi.js/src/core/interpreter';
+const interpreter = require('aoi.js/src/core/interpreter');
 import type { Manager } from './Manager';
-import type { Client, Channel, Guild } from 'discord.js';
+import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
 import type { GuildQueue } from 'discord-player';
 
 export interface CommandData {
@@ -28,20 +28,20 @@ declare global {
 export class Commands {
     public readonly manager: Manager;
     public readonly client: Client;
-    public readonly events: GuildQueueEvents[] = [];
+    public readonly events: string[] = [];
 
     public trackStart?: Collective<number, CommandData>;
     public trackEnd?: Collective<number, CommandData>;
     public queueEnd?: Collective<number, CommandData>;
 
-    constructor(manager: Manager, events?: Array<string>) {
+    constructor(manager: Manager, events?: string[]) {
         this.manager = manager;
         this.client = manager.client;
 
         if (!Array.isArray(events)) return;
         const _events = events.filter((e: string): boolean => {
-            return Object.values(GuildQueueEvents).includes(e as GuildQueueEvents);
-        }) as GuildQueueEvents[];
+            return (Object.values(GuildQueueEvents) as string[]).includes(e as string);
+        }) as string[];
 
         if (_events.length === 0) return;
         this.events = _events;
@@ -59,8 +59,12 @@ export class Commands {
         this.manager.player.events.on(event, async (queue: GuildQueue<any>, ...args: any) => {
             for (const cmd of commands.values()) {
                 if (!cmd) continue;
+
                 let guild: Guild = queue.guild;
-                let channel: Channel | null = queue.channel;
+                const author: User | null = queue.currentTrack?.requestedBy ?? null;
+                const member: GuildMember | null =
+                    guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
+                let channel: Channel | null = queue.metadata.text;
 
                 if (cmd.channel.includes('$') && cmd.channel !== '$') {
                     channel =
@@ -68,7 +72,7 @@ export class Commands {
                             (
                                 await interpreter(
                                     this.client,
-                                    { guild, channel },
+                                    { guild, channel, member, author },
                                     [],
                                     { code: cmd.channel, name: 'NameParser' },
                                     undefined,
@@ -80,10 +84,10 @@ export class Commands {
                         ) ?? null;
                 }
 
-                if (!channel) channel = queue.channel;
+                if (!channel) channel = queue.metadata.text;
                 if (!guild) guild = queue.guild;
 
-                await interpreter(this.client, { guild, channel }, [], cmd, undefined, false, channel, {
+                await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
                     queue,
                     ...args
                 });
@@ -94,7 +98,7 @@ export class Commands {
     public add(data: CommandData): Commands {
         if (!data || typeof data !== 'object') return this;
         const command = this[data.type];
-        if (!command || !data.hasOwn('code')) return this;
+        if (!command || !Object.hasOwn(data, 'code')) return this;
         command.set(command.size, data);
         return this;
     }

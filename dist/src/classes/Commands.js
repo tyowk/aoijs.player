@@ -8,7 +8,7 @@ var _Commands_instances, _Commands_bindEvents;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Commands = exports.GuildQueueEvents = void 0;
 const Collective_1 = require("../utils/Collective");
-const interpreter_1 = require("aoi.js/src/core/interpreter");
+const interpreter = require('aoi.js/src/core/interpreter');
 var GuildQueueEvents;
 (function (GuildQueueEvents) {
     GuildQueueEvents["TrackStart"] = "trackStart";
@@ -38,7 +38,7 @@ class Commands {
         if (!data || typeof data !== 'object')
             return this;
         const command = this[data.type];
-        if (!command || !data.hasOwn('code'))
+        if (!command || !Object.hasOwn(data, 'code'))
             return this;
         command.set(command.size, data);
         return this;
@@ -54,16 +54,18 @@ _Commands_instances = new WeakSet(), _Commands_bindEvents = function _Commands_b
             if (!cmd)
                 continue;
             let guild = queue.guild;
-            let channel = queue.channel;
+            const author = queue.currentTrack?.requestedBy ?? null;
+            const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
+            let channel = queue.metadata.text;
             if (cmd.channel.includes('$') && cmd.channel !== '$') {
                 channel =
-                    this.client.channels.cache.get((await (0, interpreter_1.interpreter)(this.client, { guild, channel }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;
+                    this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;
             }
             if (!channel)
-                channel = queue.channel;
+                channel = queue.metadata.text;
             if (!guild)
                 guild = queue.guild;
-            await (0, interpreter_1.interpreter)(this.client, { guild, channel }, [], cmd, undefined, false, channel, {
+            await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
                 queue,
                 ...args
             });

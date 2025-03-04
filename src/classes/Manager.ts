@@ -9,13 +9,14 @@ import type { Client } from 'discord.js';
 import { Commands, type GuildQueueEvents } from './Commands';
 import type { FunctionManager } from 'aoi.js';
 import { Functions } from '../utils/Functions';
+import { Events } from './Events';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 
 export interface IManagerOptions extends PlayerInitOptions {
     connectOptions?: Omit<GuildNodeCreateOptions<unknown>, 'metadata'>;
-    events?: GuildQueueEvents[];
-    includeExtractors?: (typeof BaseExtractor)[];
+    events?: string[] | GuildQueueEvents[];
+    includeExtractors?: any[];
 }
 
 declare module 'discord.js' {
@@ -42,6 +43,7 @@ export class Manager {
             this.player.extractors.loadMulti(this.options.includeExtractors);
         }
 
+        new Events(this);
         this.#loadFunctions();
     }
 
@@ -66,6 +68,16 @@ export class Manager {
         }
     }
 
+    public command(data): Manager {
+        this.cmd.add(data);
+        return this;
+    }
+
+    public register(extractor: any, options: any): Manager {
+        this.player.extractors.register(extractor, options);
+        return this;
+    }
+
     public get cmd(): Commands {
         return this.#cmd;
     }
@@ -78,7 +90,7 @@ export class Manager {
         return this.options.connectOptions;
     }
 
-    public get events(): GuildQueueEvents[] | undefined {
+    public get events(): GuildQueueEvents[] | string[] | undefined {
         return this.options.events;
     }
 
