@@ -62,7 +62,7 @@ export class Functions {
                 }
             }
 
-            arg = this.#ArgType(arg, field.type);
+            arg = this.#switchArg(arg, field.type);
             args[i] = arg;
         }
 
@@ -73,7 +73,7 @@ export class Functions {
         return Promise.all([]);
     }
 
-    public async error(message: string, data?: object) {
+    public async error(message: string, data?: object): Promise<any> {
         if (!this.#aoiError) return;
         try {
             return this.#aoiError.fnError(this.#d, 'custom', data ?? {}, message);
@@ -111,33 +111,31 @@ export class Functions {
         return this.#fields;
     }
 
-    #ArgType(arg: string, type: ArgType): any {
-        if (!arg || arg === '') return void 0;
-        if (type === ArgType.String) {
-            return arg.toString();
-        }
-        if (type === ArgType.Void) {
+    #switchArg(arg: string, type: ArgType): any {
+        if (!arg || arg === '' || type === ArgType.Void) {
             return void 0;
         }
+
+        if (type === ArgType.String) {
+            return arg.toString().addBrackets();
+        }
+
         if (type === ArgType.Number) {
             const number = Number(arg);
-            if (Number.isNaN(number)) return void 0;
+            if (Number.isNaN(number)) return Number.NaN;
             return number;
         }
+
         if (type === ArgType.Boolean) {
-            const boolean: string | boolean = arg.toLowerCase();
+            const boolean: string = arg.toLowerCase();
             if (boolean === 'true') return true;
             if (boolean === 'false') return false;
+            if (boolean === 'yes') return true;
+            if (boolean === 'no') return false;
             return void 0;
         }
-        if (type === ArgType.Object) {
-            try {
-                return JSON.parse(arg);
-            } catch {
-                return void 0;
-            }
-        }
-        if (type === ArgType.Array) {
+
+        if (type === ArgType.Object || type === ArgType.Array) {
             try {
                 return JSON.parse(arg);
             } catch {

@@ -10,7 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Functions_instances, _Functions_name, _Functions_description, _Functions_brackets, _Functions_returns, _Functions_fields, _Functions_aoiError, _Functions_d, _Functions_ArgType;
+var _Functions_instances, _Functions_name, _Functions_description, _Functions_brackets, _Functions_returns, _Functions_fields, _Functions_aoiError, _Functions_d, _Functions_switchArg;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Functions = exports.ArgType = void 0;
 var ArgType;
@@ -63,7 +63,7 @@ class Functions {
                     arg = rest.join(';');
                 }
             }
-            arg = __classPrivateFieldGet(this, _Functions_instances, "m", _Functions_ArgType).call(this, arg, field.type);
+            arg = __classPrivateFieldGet(this, _Functions_instances, "m", _Functions_switchArg).call(this, arg, field.type);
             args[i] = arg;
         }
         return await this.execute(d, args, data);
@@ -101,19 +101,17 @@ class Functions {
     }
 }
 exports.Functions = Functions;
-_Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functions_brackets = new WeakMap(), _Functions_returns = new WeakMap(), _Functions_fields = new WeakMap(), _Functions_aoiError = new WeakMap(), _Functions_d = new WeakMap(), _Functions_instances = new WeakSet(), _Functions_ArgType = function _Functions_ArgType(arg, type) {
-    if (!arg || arg === '')
+_Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functions_brackets = new WeakMap(), _Functions_returns = new WeakMap(), _Functions_fields = new WeakMap(), _Functions_aoiError = new WeakMap(), _Functions_d = new WeakMap(), _Functions_instances = new WeakSet(), _Functions_switchArg = function _Functions_switchArg(arg, type) {
+    if (!arg || arg === '' || type === ArgType.Void) {
         return void 0;
-    if (type === ArgType.String) {
-        return arg.toString();
     }
-    if (type === ArgType.Void) {
-        return void 0;
+    if (type === ArgType.String) {
+        return arg.toString().addBrackets();
     }
     if (type === ArgType.Number) {
         const number = Number(arg);
         if (Number.isNaN(number))
-            return void 0;
+            return Number.NaN;
         return number;
     }
     if (type === ArgType.Boolean) {
@@ -122,17 +120,13 @@ _Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functi
             return true;
         if (boolean === 'false')
             return false;
+        if (boolean === 'yes')
+            return true;
+        if (boolean === 'no')
+            return false;
         return void 0;
     }
-    if (type === ArgType.Object) {
-        try {
-            return JSON.parse(arg);
-        }
-        catch {
-            return void 0;
-        }
-    }
-    if (type === ArgType.Array) {
+    if (type === ArgType.Object || type === ArgType.Array) {
         try {
             return JSON.parse(arg);
         }

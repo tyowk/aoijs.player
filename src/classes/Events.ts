@@ -1,5 +1,5 @@
 import type { Manager } from './Manager';
-import { GuildQueueEvent } from 'discord-player';
+
 export class Events {
     private manager: Manager;
 
@@ -8,9 +8,11 @@ export class Events {
         this.#bindEvents(this.manager.player.events);
     }
 
-    #bindEvents(ctx) {
+    #bindEvents(ctx): Events {
         ctx.on('playerStart', (...args: any) => ctx.emit('trackStart', ...args));
         ctx.on('playerFinish', (...args: any) => ctx.emit('trackEnd', ...args));
         ctx.on('queueDelete', (...args: any) => ctx.emit('queueEnd', ...args));
+
+        return this;
     }
 }

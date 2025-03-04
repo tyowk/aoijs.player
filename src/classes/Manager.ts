@@ -1,22 +1,17 @@
 import {
-    type BaseExtractor,
     type GuildNodeCreateOptions,
     Player,
     type PlayerInitOptions,
     type ExtractorExecutionContext
 } from 'discord-player';
+import { DefaultExtractors } from '@discord-player/extractor';
 import type { Client } from 'discord.js';
 import { Commands, type GuildQueueEvents } from './Commands';
 import type { FunctionManager } from 'aoi.js';
-import { Functions } from '../utils/Functions';
-import { Events } from './Events';
-import * as path from 'node:path';
-import * as fs from 'node:fs';
 
-export interface IManagerOptions extends PlayerInitOptions {
+export interface ManagerOptions extends PlayerInitOptions {
     connectOptions?: Omit<GuildNodeCreateOptions<unknown>, 'metadata'>;
     events?: string[] | GuildQueueEvents[];
-    includeExtractors?: any[];
 }
 
 declare module 'discord.js' {
@@ -30,42 +25,16 @@ export class Manager {
     #player: Player;
     #client: Client;
     #cmd: Commands;
-    #options: IManagerOptions;
+    #options: ManagerOptions;
 
-    public constructor(client: Client, options: IManagerOptions = {}) {
+    public constructor(client: Client, options: ManagerOptions = {}) {
         this.#player = new Player(client, options);
         this.#client = client;
         this.#client.manager = this;
         this.#cmd = new Commands(this, options.events);
         this.#options = options;
 
-        if (this.options.includeExtractors) {
-            this.player.extractors.loadMulti(this.options.includeExtractors);
-        }
-
-        new Events(this);
-        this.#loadFunctions();
-    }
-
-    #loadFunctions(basePath = path.join(__dirname, '..', 'functions')) {
-        const files = fs.readdirSync(basePath);
-        for (const file of files) {
-            const filePath = path.join(basePath, file);
-            const stat = fs.lstatSync(filePath);
-            if (stat.isDirectory()) {
-                this.#loadFunctions(filePath);
-            } else if (file.endsWith('.js')) {
-                const RawFunction = require(filePath).default;
-                if (!RawFunction && !(RawFunction.prototype instanceof Functions)) continue;
-                const func = new RawFunction();
-                if (!func.name) continue;
-                this.#client.functionManager.createFunction({
-                    name: func.name,
-                    type: 'djs',
-                    code: func.code.bind(func)
-                });
-            }
-        }
+        this.loadMulti(DefaultExtractors);
     }
 
     public command(data): Manager {
@@ -74,7 +43,12 @@ export class Manager {
     }
 
     public register(extractor: any, options: any): Manager {
-        this.player.extractors.register(extractor, options);
+        this.extractors.register(extractor, options);
+        return this;
+    }
+
+    public loadMulti(extractors: any[]): Manager {
+        this.extractors.loadMulti(extractors);
         return this;
     }
 
@@ -82,11 +56,11 @@ export class Manager {
         return this.#cmd;
     }
 
-    public get options(): IManagerOptions {
+    public get options(): ManagerOptions {
         return this.#options;
     }
 
-    public get connectOptions(): IManagerOptions['connectOptions'] {
+    public get connectOptions(): ManagerOptions['connectOptions'] {
         return this.options.connectOptions;
     }
 

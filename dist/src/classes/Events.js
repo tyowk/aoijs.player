@@ -19,4 +19,5 @@ _Events_instances = new WeakSet(), _Events_bindEvents = function _Events_bindEve
     ctx.on('playerStart', (...args) => ctx.emit('trackStart', ...args));
     ctx.on('playerFinish', (...args) => ctx.emit('trackEnd', ...args));
     ctx.on('queueDelete', (...args) => ctx.emit('queueEnd', ...args));
+    return this;
 };

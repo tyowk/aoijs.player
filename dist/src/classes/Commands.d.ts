@@ -28,5 +28,6 @@ export declare class Commands {
     trackEnd?: Collective<number, CommandData>;
     queueEnd?: Collective<number, CommandData>;
     constructor(manager: Manager, events?: string[]);
+    loadFunctions(basePath?: string): Commands;
     add(data: CommandData): Commands;
 }

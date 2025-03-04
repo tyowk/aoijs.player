@@ -9,6 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Commands = exports.GuildQueueEvents = void 0;
 const Collective_1 = require("../utils/Collective");
 const interpreter = require('aoi.js/src/core/interpreter');
+const Functions_1 = require("../utils/Functions");
+const Events_1 = require("./Events");
+const path = require("node:path");
+const fs = require("node:fs");
 var GuildQueueEvents;
 (function (GuildQueueEvents) {
     GuildQueueEvents["TrackStart"] = "trackStart";
@@ -29,10 +33,45 @@ class Commands {
         if (_events.length === 0)
             return;
         this.events = _events;
+        new Events_1.Events(this.manager);
+        this.loadFunctions();
         for (const event of _events) {
             this[event] = new Collective_1.Collective();
             __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);
         }
+    }
+    loadFunctions(basePath = path.join(__dirname, '..', 'functions')) {
+        const files = fs.readdirSync(basePath);
+        for (const file of files) {
+            const filePath = path.join(basePath, file);
+            const stat = fs.lstatSync(filePath);
+            if (stat.isDirectory()) {
+                this.loadFunctions(filePath);
+            }
+            else if (file.endsWith('.js')) {
+                const RawFunction = require(filePath).default;
+                if (!RawFunction && !(RawFunction.prototype instanceof Functions_1.Functions))
+                    continue;
+                const func = new RawFunction();
+                if (!func.name)
+                    continue;
+                if (typeof func.code === 'function') {
+                    this.client.functionManager.createFunction({
+                        name: func.name,
+                        type: 'djs',
+                        code: func.code.bind(func)
+                    });
+                }
+                else if (typeof func.code === 'string') {
+                    this.client.functionManager.createFunction({
+                        name: func.name,
+                        type: 'aoi.js',
+                        code: func.code
+                    });
+                }
+            }
+        }
+        return this;
     }
     add(data) {
         if (!data || typeof data !== 'object')
@@ -48,7 +87,7 @@ exports.Commands = Commands;
 _Commands_instances = new WeakSet(), _Commands_bindEvents = function _Commands_bindEvents(event) {
     const commands = this[event];
     if (!commands)
-        return;
+        return this;
     this.manager.player.events.on(event, async (queue, ...args) => {
         for (const cmd of commands.values()) {
             if (!cmd)
@@ -65,10 +104,13 @@ _Commands_instances = new WeakSet(), _Commands_bindEvents = function _Commands_b
                 channel = queue.metadata.text;
             if (!guild)
                 guild = queue.guild;
-            await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
-                queue,
-                ...args
+            await this.manager.player.context.provide({ guild }, async () => {
+                await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
+                    queue,
+                    ...args
+                });
             });
         }
     });
+    return this;
 };

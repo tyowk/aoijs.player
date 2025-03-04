@@ -40,6 +40,7 @@ export default class PlayTrack extends Functions {
             d.client.channels.cache.get(channel) ??
             (await d.client.channels.fetch(channel).catch(() => null)) ??
             ({} as VoiceBasedChannel);
+
         if (!voiceChannel) return this.error('Invalid voice channel ID provided.');
         if (voiceChannel.type !== ChannelType.GuildVoice && voiceChannel.type !== ChannelType.GuildStageVoice)
             return this.error(

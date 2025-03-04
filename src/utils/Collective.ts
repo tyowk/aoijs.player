@@ -1,5 +1,5 @@
 export class Collective<K, V> extends Map<K, V> {
-    public create(key: K, value: V) {
+    public create(key: K, value: V): Collective<K, V> {
         return super.set(key, value);
     }
 
@@ -23,11 +23,11 @@ export class Collective<K, V> extends Map<K, V> {
         return super.has(key);
     }
 
-    public get K(): Array<K> {
+    public get K(): K[] {
         return [...this.keys()];
     }
 
-    public get V(): Array<V> {
+    public get V(): V[] {
         return [...this.values()];
     }
 }

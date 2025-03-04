@@ -1,8 +1,9 @@
+// importing the modules
 import { AoiClient } from 'aoi.js';
 import { Manager, GuildQueueEvents } from '../src';
 import { YoutubeiExtractor } from 'discord-player-youtubei'
-import { DefaultExtractors } from '@discord-player/extractor';
 
+// initialize the client instance
 const client = new AoiClient({
     token: process.env.TOKEN ?? '',
     prefix: '?',
@@ -11,19 +12,24 @@ const client = new AoiClient({
     events: ['onMessage', 'onVoiceStateUpdate']
 });
 
+// initialize the manager instance
 const manager = new Manager(client, {
-    includeExtractors: DefaultExtractors,
     events: [
         GuildQueueEvents.TrackStart,
     ]
-}).register(YoutubeiExtractor, {});
+});
 
+// registering youtube extractor
+manager.register(YoutubeiExtractor, {});
+
+// trackStart event
 manager.command({
     type: 'trackStart',
     channel: '$channelId',
     code: 'Started playing at <#$voiceId>'
 });
 
+// play command
 // @ts-ignore
 client.command({
     name: 'play',
