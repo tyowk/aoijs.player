@@ -1,4 +1,5 @@
-import { Functions, ArgType } from '../../utils/Functions';
+import { Functions } from '../../utils/Functions';
+import { ArgType } from '../../typings';
 import { useMainPlayer, type SearchQueryType } from 'discord-player';
 import { type VoiceBasedChannel, ChannelType } from 'discord.js';
 

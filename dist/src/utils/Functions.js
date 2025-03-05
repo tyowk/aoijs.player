@@ -12,16 +12,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _Functions_instances, _Functions_name, _Functions_description, _Functions_brackets, _Functions_returns, _Functions_fields, _Functions_aoiError, _Functions_d, _Functions_switchArg;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Functions = exports.ArgType = void 0;
-var ArgType;
-(function (ArgType) {
-    ArgType[ArgType["String"] = 0] = "String";
-    ArgType[ArgType["Void"] = 1] = "Void";
-    ArgType[ArgType["Number"] = 2] = "Number";
-    ArgType[ArgType["Boolean"] = 3] = "Boolean";
-    ArgType[ArgType["Object"] = 4] = "Object";
-    ArgType[ArgType["Array"] = 5] = "Array";
-})(ArgType || (exports.ArgType = ArgType = {}));
+exports.Functions = void 0;
+const typings_1 = require("../typings");
 class Functions {
     constructor(data) {
         _Functions_instances.add(this);
@@ -37,8 +29,6 @@ class Functions {
         __classPrivateFieldSet(this, _Functions_brackets, data.brackets, "f");
         __classPrivateFieldSet(this, _Functions_returns, data.returns, "f");
         __classPrivateFieldSet(this, _Functions_fields, data.fields, "f");
-        __classPrivateFieldSet(this, _Functions_aoiError, void 0, "f");
-        __classPrivateFieldSet(this, _Functions_d, void 0, "f");
     }
     async code(d) {
         __classPrivateFieldSet(this, _Functions_aoiError, d.aoiError, "f");
@@ -48,14 +38,14 @@ class Functions {
         if (data.err && this.brackets) {
             return d.error(data.err);
         }
+        if (args.length > this.fields.length) {
+            args.splice(this.fields.length);
+        }
         for (let i = 0; i < this.fields.length; i++) {
             let arg = args[i] ?? '';
             const field = this.fields[i] ?? {};
             if (field.required && (!arg || arg === '')) {
                 return this.error(`Missing argument \`${field.name}\` in function \`${this.name}\`!`, data);
-            }
-            if (args.length > this.fields.length) {
-                args.splice(this.fields.length);
             }
             if (field.rest) {
                 const [...rest] = args.splice(i, this.fields.length - i);
@@ -63,8 +53,7 @@ class Functions {
                     arg = rest.join(';');
                 }
             }
-            arg = __classPrivateFieldGet(this, _Functions_instances, "m", _Functions_switchArg).call(this, arg, field.type);
-            args[i] = arg;
+            args[i] = __classPrivateFieldGet(this, _Functions_instances, "m", _Functions_switchArg).call(this, arg, field.type);
         }
         return await this.execute(d, args, data);
     }
@@ -102,19 +91,19 @@ class Functions {
 }
 exports.Functions = Functions;
 _Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functions_brackets = new WeakMap(), _Functions_returns = new WeakMap(), _Functions_fields = new WeakMap(), _Functions_aoiError = new WeakMap(), _Functions_d = new WeakMap(), _Functions_instances = new WeakSet(), _Functions_switchArg = function _Functions_switchArg(arg, type) {
-    if (!arg || arg === '' || type === ArgType.Void) {
+    if (!arg || arg === '' || type === typings_1.ArgType.Void) {
         return void 0;
     }
-    if (type === ArgType.String) {
+    if (type === typings_1.ArgType.String) {
         return arg.toString().addBrackets();
     }
-    if (type === ArgType.Number) {
+    if (type === typings_1.ArgType.Number) {
         const number = Number(arg);
         if (Number.isNaN(number))
             return Number.NaN;
         return number;
     }
-    if (type === ArgType.Boolean) {
+    if (type === typings_1.ArgType.Boolean) {
         const boolean = arg.toLowerCase();
         if (boolean === 'true')
             return true;
@@ -126,7 +115,7 @@ _Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functi
             return false;
         return void 0;
     }
-    if (type === ArgType.Object || type === ArgType.Array) {
+    if (type === typings_1.ArgType.Object || type === typings_1.ArgType.Array) {
         try {
             return JSON.parse(arg);
         }
@@ -134,4 +123,5 @@ _Functions_name = new WeakMap(), _Functions_description = new WeakMap(), _Functi
             return void 0;
         }
     }
+    return void 0;
 };

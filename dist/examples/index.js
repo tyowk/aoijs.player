@@ -15,7 +15,7 @@ const client = new aoi_js_1.AoiClient({
 // initialize the manager instance
 const manager = new src_1.Manager(client, {
     events: [
-        src_1.GuildQueueEvents.TrackStart,
+        src_1.PlayerEvents.TrackStart,
     ]
 });
 // registering youtube extractor
@@ -30,5 +30,5 @@ manager.command({
 // @ts-ignore
 client.command({
     name: 'play',
-    code: '$playTrack[$voiceId;$message;youtube]'
+    code: '$playTrack[$voiceId;$message;spotifySearch]'
 });

@@ -51,7 +51,7 @@ class Manager {
         return this.options.connectOptions;
     }
     get events() {
-        return this.options.events;
+        return this.cmd.events ?? [];
     }
     get extractors() {
         return this.player.extractors;

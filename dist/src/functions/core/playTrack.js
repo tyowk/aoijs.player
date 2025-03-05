@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Functions_1 = require("../../utils/Functions");
+const typings_1 = require("../../typings");
 const discord_player_1 = require("discord-player");
 const discord_js_1 = require("discord.js");
 class PlayTrack extends Functions_1.Functions {
@@ -13,19 +14,19 @@ class PlayTrack extends Functions_1.Functions {
                 {
                     name: 'channel',
                     description: 'The channel to play music.',
-                    type: Functions_1.ArgType.String,
+                    type: typings_1.ArgType.String,
                     required: true
                 },
                 {
                     name: 'query',
                     description: 'The query to search for.',
-                    type: Functions_1.ArgType.String,
+                    type: typings_1.ArgType.String,
                     required: true
                 },
                 {
                     name: 'engine',
                     description: 'The engine to use to search for.',
-                    type: Functions_1.ArgType.String,
+                    type: typings_1.ArgType.String,
                     required: false
                 }
             ]

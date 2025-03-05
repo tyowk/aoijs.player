@@ -1,25 +1,8 @@
-import {
-    type GuildNodeCreateOptions,
-    Player,
-    type PlayerInitOptions,
-    type ExtractorExecutionContext
-} from 'discord-player';
+import { Player, type ExtractorExecutionContext } from 'discord-player';
 import { DefaultExtractors } from '@discord-player/extractor';
 import type { Client } from 'discord.js';
-import { Commands, type GuildQueueEvents } from './Commands';
-import type { FunctionManager } from 'aoi.js';
-
-export interface ManagerOptions extends PlayerInitOptions {
-    connectOptions?: Omit<GuildNodeCreateOptions<unknown>, 'metadata'>;
-    events?: string[] | GuildQueueEvents[];
-}
-
-declare module 'discord.js' {
-    interface Client {
-        manager: Manager;
-        functionManager: FunctionManager;
-    }
-}
+import { Commands } from './Commands';
+import type { PlayerEvents, ManagerOptions } from '../typings';
 
 export class Manager {
     #player: Player;
@@ -64,8 +47,8 @@ export class Manager {
         return this.options.connectOptions;
     }
 
-    public get events(): GuildQueueEvents[] | string[] | undefined {
-        return this.options.events;
+    public get events(): PlayerEvents[] | string[] {
+        return this.cmd.events ?? [];
     }
 
     public get extractors(): ExtractorExecutionContext {

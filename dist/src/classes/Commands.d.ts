@@ -1,24 +1,7 @@
 import { Collective } from '../utils/Collective';
 import type { Manager } from './Manager';
 import type { Client } from 'discord.js';
-export interface CommandData {
-    name?: string;
-    type: string;
-    code: string;
-    [key: string | number | symbol]: any;
-}
-export declare enum GuildQueueEvents {
-    TrackStart = "trackStart",
-    TrackEnd = "trackEnd",
-    QueueEnd = "queueEnd"
-}
-declare global {
-    interface String {
-        deleteBrackets(): string;
-        addBrackets(): string;
-        removeBrackets(): string;
-    }
-}
+import { type CommandData } from '../typings';
 export declare class Commands {
     #private;
     readonly manager: Manager;

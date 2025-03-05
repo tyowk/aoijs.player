@@ -1,6 +1,6 @@
 // importing the modules
 import { AoiClient } from 'aoi.js';
-import { Manager, GuildQueueEvents } from '../src';
+import { Manager, PlayerEvents } from '../src';
 import { YoutubeiExtractor } from 'discord-player-youtubei'
 
 // initialize the client instance
@@ -15,7 +15,7 @@ const client = new AoiClient({
 // initialize the manager instance
 const manager = new Manager(client, {
     events: [
-        GuildQueueEvents.TrackStart,
+        PlayerEvents.TrackStart,
     ]
 });
 
@@ -33,5 +33,5 @@ manager.command({
 // @ts-ignore
 client.command({
     name: 'play',
-    code: '$playTrack[$voiceId;$message;youtube]'
+    code: '$playTrack[$voiceId;$message;spotifySearch]'
 });

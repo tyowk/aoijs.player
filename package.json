@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "format": "biome format src --write",
-        "lint": "biome lint src",
+        "lint": "biome lint src --fix",
         "dev": "node dist/examples"
     },
     "author": "Tyowk <tyowk@outlook.com>",

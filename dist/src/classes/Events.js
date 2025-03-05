@@ -7,17 +7,22 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _Events_instances, _Events_bindEvents;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Events = void 0;
+const typings_1 = require("../typings");
 class Events {
-    constructor(manager) {
+    constructor(manager, events) {
         _Events_instances.add(this);
         this.manager = manager;
-        __classPrivateFieldGet(this, _Events_instances, "m", _Events_bindEvents).call(this, this.manager.player.events);
+        __classPrivateFieldGet(this, _Events_instances, "m", _Events_bindEvents).call(this, this.manager.player.events, events ?? []);
     }
 }
 exports.Events = Events;
-_Events_instances = new WeakSet(), _Events_bindEvents = function _Events_bindEvents(ctx) {
-    ctx.on('playerStart', (...args) => ctx.emit('trackStart', ...args));
-    ctx.on('playerFinish', (...args) => ctx.emit('trackEnd', ...args));
-    ctx.on('queueDelete', (...args) => ctx.emit('queueEnd', ...args));
+_Events_instances = new WeakSet(), _Events_bindEvents = function _Events_bindEvents(ctx, events) {
+    if (!events.length || !ctx)
+        return this;
+    for (const event of events) {
+        ctx.on(typings_1.PlayerEventsBefore[event], (...args) => {
+            ctx.emit(event, ...args);
+        });
+    }
     return this;
 };

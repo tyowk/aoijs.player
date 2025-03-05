@@ -3,31 +3,11 @@ const interpreter = require('aoi.js/src/core/interpreter');
 import type { Manager } from './Manager';
 import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
 import type { GuildQueue } from 'discord-player';
+import { type CommandData, PlayerEvents } from '../typings';
 import { Functions } from '../utils/Functions';
 import { Events } from './Events';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-
-export interface CommandData {
-    name?: string;
-    type: string;
-    code: string;
-    [key: string | number | symbol]: any;
-}
-
-export enum GuildQueueEvents {
-    TrackStart = 'trackStart',
-    TrackEnd = 'trackEnd',
-    QueueEnd = 'queueEnd'
-}
-
-declare global {
-    interface String {
-        deleteBrackets(): string;
-        addBrackets(): string;
-        removeBrackets(): string;
-    }
-}
 
 export class Commands {
     public readonly manager: Manager;
@@ -41,20 +21,21 @@ export class Commands {
     constructor(manager: Manager, events?: string[]) {
         this.manager = manager;
         this.client = manager.client;
-
-        if (!Array.isArray(events)) return;
-        const _events = events.filter((e: string): boolean => {
-            return (Object.values(GuildQueueEvents) as string[]).includes(e as string);
-        }) as string[];
-
-        if (_events.length === 0) return;
-        this.events = _events;
-        new Events(this.manager);
         this.loadFunctions();
 
-        for (const event of _events) {
-            this[event] = new Collective<number, CommandData>();
-            this.#bindEvents(event);
+        if (Array.isArray(events)) {
+            this.events = events.filter((e: string): boolean => {
+                return (Object.values(PlayerEvents) as string[]).includes(e as string);
+            }) as string[];
+
+            if (this.events.length) {
+                new Events(this.manager, this.events);
+
+                for (const event of this.events) {
+                    this[event] = new Collective<number, CommandData>();
+                    this.#bindEvents(event);
+                }
+            }
         }
     }
 
@@ -64,13 +45,13 @@ export class Commands {
 
         this.manager.player.events.on(event, async (queue: GuildQueue<any>, ...args: any) => {
             for (const cmd of commands.values()) {
-                if (!cmd) continue;
+                if (!cmd || !cmd.code) continue;
 
                 let guild: Guild = queue.guild;
                 const author: User | null = queue.currentTrack?.requestedBy ?? null;
+                let channel: Channel | null = queue.metadata.text;
                 const member: GuildMember | null =
                     guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
-                let channel: Channel | null = queue.metadata.text;
 
                 if (cmd.channel.includes('$') && cmd.channel !== '$') {
                     channel =

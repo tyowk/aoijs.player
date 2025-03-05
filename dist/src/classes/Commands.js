@@ -6,38 +6,32 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _Commands_instances, _Commands_bindEvents;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Commands = exports.GuildQueueEvents = void 0;
+exports.Commands = void 0;
 const Collective_1 = require("../utils/Collective");
 const interpreter = require('aoi.js/src/core/interpreter');
+const typings_1 = require("../typings");
 const Functions_1 = require("../utils/Functions");
 const Events_1 = require("./Events");
 const path = require("node:path");
 const fs = require("node:fs");
-var GuildQueueEvents;
-(function (GuildQueueEvents) {
-    GuildQueueEvents["TrackStart"] = "trackStart";
-    GuildQueueEvents["TrackEnd"] = "trackEnd";
-    GuildQueueEvents["QueueEnd"] = "queueEnd";
-})(GuildQueueEvents || (exports.GuildQueueEvents = GuildQueueEvents = {}));
 class Commands {
     constructor(manager, events) {
         _Commands_instances.add(this);
         this.events = [];
         this.manager = manager;
         this.client = manager.client;
-        if (!Array.isArray(events))
-            return;
-        const _events = events.filter((e) => {
-            return Object.values(GuildQueueEvents).includes(e);
-        });
-        if (_events.length === 0)
-            return;
-        this.events = _events;
-        new Events_1.Events(this.manager);
         this.loadFunctions();
-        for (const event of _events) {
-            this[event] = new Collective_1.Collective();
-            __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);
+        if (Array.isArray(events)) {
+            this.events = events.filter((e) => {
+                return Object.values(typings_1.PlayerEvents).includes(e);
+            });
+            if (this.events.length) {
+                new Events_1.Events(this.manager, this.events);
+                for (const event of this.events) {
+                    this[event] = new Collective_1.Collective();
+                    __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);
+                }
+            }
         }
     }
     loadFunctions(basePath = path.join(__dirname, '..', 'functions')) {
@@ -90,12 +84,12 @@ _Commands_instances = new WeakSet(), _Commands_bindEvents = function _Commands_b
         return this;
     this.manager.player.events.on(event, async (queue, ...args) => {
         for (const cmd of commands.values()) {
-            if (!cmd)
+            if (!cmd || !cmd.code)
                 continue;
             let guild = queue.guild;
             const author = queue.currentTrack?.requestedBy ?? null;
-            const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
             let channel = queue.metadata.text;
+            const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
             if (cmd.channel.includes('$') && cmd.channel !== '$') {
                 channel =
                     this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;

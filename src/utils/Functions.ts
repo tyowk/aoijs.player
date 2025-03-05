@@ -1,11 +1,4 @@
-export enum ArgType {
-    String = 0,
-    Void = 1,
-    Number = 2,
-    Boolean = 3,
-    Object = 4,
-    Array = 5
-}
+import { ArgType } from '../typings';
 
 export class Functions {
     readonly #name: string;
@@ -20,8 +13,8 @@ export class Functions {
         rest: boolean;
     }[];
 
-    #aoiError: any;
-    #d: any;
+    #aoiError: any = void 0;
+    #d: any = void 0;
 
     constructor(data: any) {
         this.#name = data.name;
@@ -29,9 +22,6 @@ export class Functions {
         this.#brackets = data.brackets;
         this.#returns = data.returns;
         this.#fields = data.fields;
-
-        this.#aoiError = void 0;
-        this.#d = void 0;
     }
 
     public async code(d: any): Promise<unknown> {
@@ -44,15 +34,15 @@ export class Functions {
             return d.error(data.err);
         }
 
+        if (args.length > this.fields.length) {
+            args.splice(this.fields.length);
+        }
+
         for (let i = 0; i < this.fields.length; i++) {
             let arg = args[i] ?? '';
             const field = this.fields[i] ?? {};
             if (field.required && (!arg || arg === '')) {
                 return this.error(`Missing argument \`${field.name}\` in function \`${this.name}\`!`, data);
-            }
-
-            if (args.length > this.fields.length) {
-                args.splice(this.fields.length);
             }
 
             if (field.rest) {
@@ -62,8 +52,7 @@ export class Functions {
                 }
             }
 
-            arg = this.#switchArg(arg, field.type);
-            args[i] = arg;
+            args[i] = this.#switchArg(arg, field.type);
         }
 
         return await this.execute(d, args, data);
@@ -142,5 +131,7 @@ export class Functions {
                 return void 0;
             }
         }
+
+        return void 0;
     }
 }
