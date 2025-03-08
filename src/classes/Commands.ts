@@ -5,17 +5,14 @@ import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
 import { type GuildQueue, GuildQueueEvent } from 'discord-player';
 import type { CommandData } from '../typings';
 import { Functions } from '../utils/Functions';
-import * as path from 'node:path';
-import * as fs from 'node:fs';
+import { join } from 'node:path';
+import { readdirSync, lstatSync } from 'node:fs';
 
 export class Commands {
+    [key: string]: any;
     public readonly manager: Manager;
     public readonly client: Client;
     public readonly events: string[] = [];
-
-    public trackStart?: Collective<number, CommandData>;
-    public trackEnd?: Collective<number, CommandData>;
-    public queueEnd?: Collective<number, CommandData>;
 
     constructor(manager: Manager, events?: string[]) {
         this.manager = manager;
@@ -29,14 +26,15 @@ export class Commands {
 
             if (this.events.length) {
                 for (const event of this.events) {
+                    if (this[event] instanceof Collective) continue;
                     this[event] = new Collective<number, CommandData>();
-                    this.#bindEvents(event);
+                    this.#bindEvents(event as GuildQueueEvent);
                 }
             }
         }
     }
 
-    #bindEvents(event): Commands {
+    #bindEvents(event: GuildQueueEvent): Commands {
         const commands = this[event];
         if (!commands) return this;
 
@@ -92,11 +90,11 @@ export class Commands {
         return this;
     }
 
-    public loadFunctions(basePath = path.join(__dirname, '..', 'functions')): Commands {
-        const files = fs.readdirSync(basePath);
+    public loadFunctions(basePath = join(__dirname, '..', 'functions')): Commands {
+        const files = readdirSync(basePath);
         for (const file of files) {
-            const filePath = path.join(basePath, file);
-            const stat = fs.lstatSync(filePath);
+            const filePath = join(basePath, file);
+            const stat = lstatSync(filePath);
             if (stat.isDirectory()) {
                 this.loadFunctions(filePath);
             } else if (file.endsWith('.js')) {

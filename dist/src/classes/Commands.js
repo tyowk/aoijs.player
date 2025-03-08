@@ -11,8 +11,8 @@ const Collective_1 = require("../utils/Collective");
 const interpreter = require('aoi.js/src/core/interpreter');
 const discord_player_1 = require("discord-player");
 const Functions_1 = require("../utils/Functions");
-const path = require("node:path");
-const fs = require("node:fs");
+const node_path_1 = require("node:path");
+const node_fs_1 = require("node:fs");
 class Commands {
     constructor(manager, events) {
         _Commands_instances.add(this);
@@ -26,17 +26,19 @@ class Commands {
             });
             if (this.events.length) {
                 for (const event of this.events) {
+                    if (this[event] instanceof Collective_1.Collective)
+                        continue;
                     this[event] = new Collective_1.Collective();
                     __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);
                 }
             }
         }
     }
-    loadFunctions(basePath = path.join(__dirname, '..', 'functions')) {
-        const files = fs.readdirSync(basePath);
+    loadFunctions(basePath = (0, node_path_1.join)(__dirname, '..', 'functions')) {
+        const files = (0, node_fs_1.readdirSync)(basePath);
         for (const file of files) {
-            const filePath = path.join(basePath, file);
-            const stat = fs.lstatSync(filePath);
+            const filePath = (0, node_path_1.join)(basePath, file);
+            const stat = (0, node_fs_1.lstatSync)(filePath);
             if (stat.isDirectory()) {
                 this.loadFunctions(filePath);
             }
