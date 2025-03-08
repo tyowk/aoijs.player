@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./classes"), exports);
 __exportStar(require("./utils"), exports);
 __exportStar(require("./typings"), exports);
+__exportStar(require("discord-player"), exports);

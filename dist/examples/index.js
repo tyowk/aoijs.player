@@ -14,15 +14,13 @@ const client = new aoi_js_1.AoiClient({
 });
 // initialize the manager instance
 const manager = new src_1.Manager(client, {
-    events: [
-        src_1.PlayerEvents.TrackStart,
-    ]
+    events: [src_1.GuildQueueEvent.PlayerStart]
 });
 // registering youtube extractor
 manager.register(discord_player_youtubei_1.YoutubeiExtractor, {});
 // trackStart event
 manager.command({
-    type: 'trackStart',
+    type: 'playerStart',
     channel: '$channelId',
     code: 'Started playing at <#$voiceId>'
 });

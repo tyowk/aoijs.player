@@ -2,10 +2,9 @@ import { Collective } from '../utils/Collective';
 const interpreter = require('aoi.js/src/core/interpreter');
 import type { Manager } from './Manager';
 import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
-import type { GuildQueue } from 'discord-player';
-import { type CommandData, PlayerEvents } from '../typings';
+import { type GuildQueue, GuildQueueEvent } from 'discord-player';
+import type { CommandData } from '../typings';
 import { Functions } from '../utils/Functions';
-import { Events } from './Events';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 
@@ -25,12 +24,10 @@ export class Commands {
 
         if (Array.isArray(events)) {
             this.events = events.filter((e: string): boolean => {
-                return (Object.values(PlayerEvents) as string[]).includes(e as string);
+                return (Object.values(GuildQueueEvent) as string[]).includes(e as string);
             }) as string[];
 
             if (this.events.length) {
-                new Events(this.manager, this.events);
-
                 for (const event of this.events) {
                     this[event] = new Collective<number, CommandData>();
                     this.#bindEvents(event);

@@ -1,7 +1,7 @@
 import { Collective } from '../utils/Collective';
 import type { Manager } from './Manager';
 import type { Client } from 'discord.js';
-import { type CommandData } from '../typings';
+import type { CommandData } from '../typings';
 export declare class Commands {
     #private;
     readonly manager: Manager;

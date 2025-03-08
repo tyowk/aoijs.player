@@ -1,5 +1,4 @@
-import type { GuildNodeCreateOptions, PlayerInitOptions } from 'discord-player';
-import type { PlayerEvents } from './enums';
+import type { GuildQueueEvent, GuildNodeCreateOptions, PlayerInitOptions } from 'discord-player';
 export interface CommandData {
     name?: string;
     type: string;
@@ -8,5 +7,5 @@ export interface CommandData {
 }
 export interface ManagerOptions extends PlayerInitOptions {
     connectOptions?: Omit<GuildNodeCreateOptions<unknown>, 'metadata'>;
-    events?: string[] | PlayerEvents[];
+    events?: string[] | GuildQueueEvent[];
 }

@@ -9,9 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Commands = void 0;
 const Collective_1 = require("../utils/Collective");
 const interpreter = require('aoi.js/src/core/interpreter');
-const typings_1 = require("../typings");
+const discord_player_1 = require("discord-player");
 const Functions_1 = require("../utils/Functions");
-const Events_1 = require("./Events");
 const path = require("node:path");
 const fs = require("node:fs");
 class Commands {
@@ -23,10 +22,9 @@ class Commands {
         this.loadFunctions();
         if (Array.isArray(events)) {
             this.events = events.filter((e) => {
-                return Object.values(typings_1.PlayerEvents).includes(e);
+                return Object.values(discord_player_1.GuildQueueEvent).includes(e);
             });
             if (this.events.length) {
-                new Events_1.Events(this.manager, this.events);
                 for (const event of this.events) {
                     this[event] = new Collective_1.Collective();
                     __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);

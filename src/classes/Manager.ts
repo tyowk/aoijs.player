@@ -1,8 +1,8 @@
-import { Player, type ExtractorExecutionContext } from 'discord-player';
+import { Player, type GuildQueueEvent, type ExtractorExecutionContext } from 'discord-player';
 import { DefaultExtractors } from '@discord-player/extractor';
 import type { Client } from 'discord.js';
 import { Commands } from './Commands';
-import type { PlayerEvents, ManagerOptions } from '../typings';
+import type { ManagerOptions } from '../typings';
 
 export class Manager {
     #player: Player;
@@ -47,7 +47,7 @@ export class Manager {
         return this.options.connectOptions;
     }
 
-    public get events(): PlayerEvents[] | string[] {
+    public get events(): GuildQueueEvent[] | string[] {
         return this.cmd.events ?? [];
     }
 

@@ -1,13 +1,3 @@
-export declare enum PlayerEvents {
-    TrackStart = "trackStart",
-    TrackEnd = "trackEnd",
-    QueueEnd = "queueEnd"
-}
-export declare enum PlayerEventsBefore {
-    trackStart = "playerStart",
-    trackEnd = "playerFinish",
-    queueEnd = "queueDelete"
-}
 export declare enum ArgType {
     String = 0,
     Void = 1,

@@ -1,7 +1,7 @@
 // importing the modules
 import { AoiClient } from 'aoi.js';
-import { Manager, PlayerEvents } from '../src';
-import { YoutubeiExtractor } from 'discord-player-youtubei'
+import { Manager, GuildQueueEvent } from '../src';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 
 // initialize the client instance
 const client = new AoiClient({
@@ -14,9 +14,7 @@ const client = new AoiClient({
 
 // initialize the manager instance
 const manager = new Manager(client, {
-    events: [
-        PlayerEvents.TrackStart,
-    ]
+    events: [GuildQueueEvent.PlayerStart]
 });
 
 // registering youtube extractor
@@ -24,7 +22,7 @@ manager.register(YoutubeiExtractor, {});
 
 // trackStart event
 manager.command({
-    type: 'trackStart',
+    type: 'playerStart',
     channel: '$channelId',
     code: 'Started playing at <#$voiceId>'
 });
