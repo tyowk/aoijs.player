@@ -22,5 +22,5 @@
         "discord-player": "^7.1.0",
         "ffmpeg-static": "^5.2.0"
     },
-    "files": ["dist/src", "package.json", "README.md", "LICENSE"]
+    "files": ["dist", "package.json", "README.md", "LICENSE"]
 }
