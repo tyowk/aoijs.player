@@ -1,13 +1,13 @@
 {
     "name": "aoijs.player",
     "version": "1.0.0",
-    "main": "./dist/src/index.js",
-    "types": "./dist/src/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "format": "biome format src --write",
         "lint": "biome lint src --fix",
-        "dev": "node dist/examples"
+        "dev": "node dist/__test__"
     },
     "author": "Tyowk <tyowk@outlook.com>",
     "license": "MIT",
