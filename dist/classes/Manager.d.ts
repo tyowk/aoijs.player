@@ -1,7 +1,7 @@
 import { Player, type GuildQueueEvent, type ExtractorExecutionContext } from 'discord-player';
-import type { Client } from 'discord.js';
 import { Commands } from './Commands';
 import type { ManagerOptions } from '../typings';
+import type { Client } from 'discord.js';
 export declare class Manager {
     #private;
     constructor(client: Client, options?: ManagerOptions);

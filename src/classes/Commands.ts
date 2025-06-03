@@ -1,12 +1,12 @@
 import { Collective } from '../utils/Collective';
-const interpreter = require('aoi.js/src/core/interpreter');
+const { interpreter } = require('aoi.js/src/core/interpreter');
+import { Functions } from '../utils/Functions';
+import { join } from 'node:path';
+import { readdirSync, lstatSync } from 'node:fs';
 import type { Manager } from './Manager';
 import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
 import { type GuildQueue, GuildQueueEvent } from 'discord-player';
 import type { CommandData } from '../typings';
-import { Functions } from '../utils/Functions';
-import { join } from 'node:path';
-import { readdirSync, lstatSync } from 'node:fs';
 
 export class Commands {
     [key: string]: any;
@@ -14,7 +14,7 @@ export class Commands {
     public readonly client: Client;
     public readonly events: string[] = [];
 
-    constructor(manager: Manager, events?: string[]) {
+    constructor(manager: Manager, events: string[] | GuildQueueEvent[] | undefined) {
         this.manager = manager;
         this.client = manager.client;
         this.loadFunctions();
@@ -112,6 +112,7 @@ export class Commands {
                 } else if (typeof func.code === 'string') {
                     this.client.functionManager.createFunction({
                         name: func.name,
+                        params: func.params,
                         type: 'aoi.js',
                         code: func.code
                     });

@@ -1,8 +1,10 @@
 import { Player, type GuildQueueEvent, type ExtractorExecutionContext } from 'discord-player';
 import { DefaultExtractors } from '@discord-player/extractor';
-import type { Client } from 'discord.js';
 import { Commands } from './Commands';
+import { Log } from 'youtubei.js';
 import type { ManagerOptions } from '../typings';
+import type { Client } from 'discord.js';
+Log.setLevel(Log.Level.NONE);
 
 export class Manager {
     #player: Player;
@@ -16,7 +18,6 @@ export class Manager {
         this.#client.manager = this;
         this.#cmd = new Commands(this, options.events);
         this.#options = options;
-
         this.loadMulti(DefaultExtractors);
     }
 

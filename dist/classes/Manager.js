@@ -16,6 +16,8 @@ exports.Manager = void 0;
 const discord_player_1 = require("discord-player");
 const extractor_1 = require("@discord-player/extractor");
 const Commands_1 = require("./Commands");
+const youtubei_js_1 = require("youtubei.js");
+youtubei_js_1.Log.setLevel(youtubei_js_1.Log.Level.NONE);
 class Manager {
     constructor(client, options = {}) {
         _Manager_player.set(this, void 0);

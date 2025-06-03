@@ -8,11 +8,11 @@ var _Commands_instances, _Commands_bindEvents;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Commands = void 0;
 const Collective_1 = require("../utils/Collective");
-const interpreter = require('aoi.js/src/core/interpreter');
-const discord_player_1 = require("discord-player");
+const { interpreter } = require('aoi.js/src/core/interpreter');
 const Functions_1 = require("../utils/Functions");
 const node_path_1 = require("node:path");
 const node_fs_1 = require("node:fs");
+const discord_player_1 = require("discord-player");
 class Commands {
     constructor(manager, events) {
         _Commands_instances.add(this);
@@ -59,6 +59,7 @@ class Commands {
                 else if (typeof func.code === 'string') {
                     this.client.functionManager.createFunction({
                         name: func.name,
+                        params: func.params,
                         type: 'aoi.js',
                         code: func.code
                     });

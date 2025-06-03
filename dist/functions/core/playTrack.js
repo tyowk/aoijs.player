@@ -12,12 +12,6 @@ class PlayTrack extends Functions_1.Functions {
             brackets: true,
             fields: [
                 {
-                    name: 'channel',
-                    description: 'The channel to play music.',
-                    type: typings_1.ArgType.String,
-                    required: true
-                },
-                {
                     name: 'query',
                     description: 'The query to search for.',
                     type: typings_1.ArgType.String,
@@ -28,14 +22,20 @@ class PlayTrack extends Functions_1.Functions {
                     description: 'The engine to use to search for.',
                     type: typings_1.ArgType.String,
                     required: false
+                },
+                {
+                    name: 'channel',
+                    description: 'The channel to play music.',
+                    type: typings_1.ArgType.String,
+                    required: false
                 }
             ]
         });
     }
-    async execute(d, [channel, query, engine = void 0], data) {
-        const voiceChannel = d.client.channels.cache.get(channel) ??
-            (await d.client.channels.fetch(channel).catch(() => null)) ??
-            {};
+    async execute(d, [query, engine = void 0, channel = void 0], data) {
+        const voiceChannel = channel
+            ? (d.client.channels.cache.get(channel) ?? (await d.client.channels.fetch(channel).catch(() => null)))
+            : d.member?.voice?.channel;
         if (!voiceChannel)
             return this.error('Invalid voice channel ID provided.');
         if (voiceChannel.type !== discord_js_1.ChannelType.GuildVoice && voiceChannel.type !== discord_js_1.ChannelType.GuildStageVoice)

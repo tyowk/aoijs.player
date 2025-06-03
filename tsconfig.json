@@ -21,7 +21,7 @@
         "alwaysStrict": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
-        "rootDir": ".",
+        "rootDir": "src",
         "skipLibCheck": true
     },
     "exclude": ["node_modules", "dist/**/*"],

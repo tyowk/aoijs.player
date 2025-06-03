@@ -11,12 +11,6 @@ export default class PlayTrack extends Functions {
             brackets: true,
             fields: [
                 {
-                    name: 'channel',
-                    description: 'The channel to play music.',
-                    type: ArgType.String,
-                    required: true
-                },
-                {
                     name: 'query',
                     description: 'The query to search for.',
                     type: ArgType.String,
@@ -27,6 +21,12 @@ export default class PlayTrack extends Functions {
                     description: 'The engine to use to search for.',
                     type: ArgType.String,
                     required: false
+                },
+                {
+                    name: 'channel',
+                    description: 'The channel to play music.',
+                    type: ArgType.String,
+                    required: false
                 }
             ]
         });
@@ -34,13 +34,12 @@ export default class PlayTrack extends Functions {
 
     public override async execute(
         d: any,
-        [channel, query, engine = void 0]: [string, string, string | undefined],
+        [query, engine = void 0, channel = void 0]: [string, string | undefined, string | undefined],
         data: any
     ): Promise<any> {
-        const voiceChannel =
-            d.client.channels.cache.get(channel) ??
-            (await d.client.channels.fetch(channel).catch(() => null)) ??
-            ({} as VoiceBasedChannel);
+        const voiceChannel = channel
+            ? (d.client.channels.cache.get(channel) ?? (await d.client.channels.fetch(channel).catch(() => null)))
+            : d.member?.voice?.channel;
 
         if (!voiceChannel) return this.error('Invalid voice channel ID provided.');
         if (voiceChannel.type !== ChannelType.GuildVoice && voiceChannel.type !== ChannelType.GuildStageVoice)

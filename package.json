@@ -13,9 +13,9 @@
     "license": "MIT",
     "devDependencies": {
         "@biomejs/biome": "^1.9.4",
-        "aoi.js": "^6.9.0",
-        "discord-player-youtubei": "^1.4.1",
-        "typescript": "^5.7.3"
+        "aoi.js": "^6.10.3",
+        "discord-player-youtubei": "^1.4.6",
+        "typescript": "^5.8.3"
     },
     "dependencies": {
         "@discord-player/extractor": "^7.1.0",
