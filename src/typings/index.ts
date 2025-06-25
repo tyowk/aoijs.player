@@ -4,6 +4,9 @@ import type { FunctionManager } from 'aoi.js';
 export * from './interfaces';
 export * from './enums';
 
+/**
+ * Declare string prototype methods.
+ */
 declare global {
     interface String {
         deleteBrackets(): string;
@@ -12,6 +15,9 @@ declare global {
     }
 }
 
+/**
+ * Declare client prototype methods.
+ */
 declare module 'discord.js' {
     interface Client {
         manager: Manager;

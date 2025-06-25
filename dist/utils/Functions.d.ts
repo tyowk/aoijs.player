@@ -1,4 +1,4 @@
-import { ArgType } from '../typings';
+import { ParamType } from '../typings';
 export declare class Functions {
     #private;
     constructor(data: any);
@@ -12,8 +12,9 @@ export declare class Functions {
     get fields(): {
         name: string;
         description: string;
-        type: ArgType;
+        type: ParamType;
         required: boolean;
-        rest: boolean;
+        rest?: boolean;
     }[];
+    get withParams(): string;
 }

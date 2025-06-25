@@ -1,5 +1,5 @@
 import { Collective } from '../utils/Collective';
-const { interpreter } = require('aoi.js/src/core/interpreter');
+const interpreter = require('aoi.js/src/core/interpreter');
 import { Functions } from '../utils/Functions';
 import { join } from 'node:path';
 import { readdirSync, lstatSync } from 'node:fs';
@@ -8,10 +8,29 @@ import type { Client, Channel, Guild, GuildMember, User } from 'discord.js';
 import { type GuildQueue, GuildQueueEvent } from 'discord-player';
 import type { CommandData } from '../typings';
 
+/**
+ * The commands manager instance.
+ *
+ * @class Commands
+ * @param {Manager} manager - The manager instance.
+ * @param {string[] | GuildQueueEvent[]} [events] - The events to listen to.
+ */
 export class Commands {
     [key: string]: any;
+
+    /**
+     * The manager instance.
+     */
     public readonly manager: Manager;
+
+    /**
+     * The discord client instance.
+     */
     public readonly client: Client;
+
+    /**
+     * The events to listen to.
+     */
     public readonly events: string[] = [];
 
     constructor(manager: Manager, events: string[] | GuildQueueEvent[] | undefined) {
@@ -34,6 +53,12 @@ export class Commands {
         }
     }
 
+    /**
+     * Binds the events to the commands.
+     *
+     * @param {GuildQueueEvent} event - The event to bind.
+     * @returns {Commands} The commands instance.
+     */
     #bindEvents(event: GuildQueueEvent): Commands {
         const commands = this[event];
         if (!commands) return this;
@@ -90,7 +115,13 @@ export class Commands {
         return this;
     }
 
-    public loadFunctions(basePath = join(__dirname, '..', 'functions')): Commands {
+    /**
+     * Loads the functions from the functions directory.
+     *
+     * @param {string} [basePath] - The base path to load the functions from.
+     * @returns {Commands} The commands instance.
+     */
+    public loadFunctions(basePath: string = join(__dirname, '..', 'functions')): Commands {
         const files = readdirSync(basePath);
         for (const file of files) {
             const filePath = join(basePath, file);
@@ -123,6 +154,12 @@ export class Commands {
         return this;
     }
 
+    /**
+     * Adds a new command to the commands instance.
+     *
+     * @param {CommandData} data - The command data.
+     * @returns {Commands} The commands instance.
+     */
     public add(data: CommandData): Commands {
         if (!data || typeof data !== 'object') return this;
         const command = this[data.type];

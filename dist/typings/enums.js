@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArgType = void 0;
-var ArgType;
-(function (ArgType) {
-    ArgType[ArgType["String"] = 0] = "String";
-    ArgType[ArgType["Void"] = 1] = "Void";
-    ArgType[ArgType["Number"] = 2] = "Number";
-    ArgType[ArgType["Boolean"] = 3] = "Boolean";
-    ArgType[ArgType["Object"] = 4] = "Object";
-    ArgType[ArgType["Array"] = 5] = "Array";
-})(ArgType || (exports.ArgType = ArgType = {}));
+exports.ParamType = void 0;
+var ParamType;
+(function (ParamType) {
+    ParamType["String"] = "String";
+    ParamType["Void"] = "Void";
+    ParamType["Number"] = "Number";
+    ParamType["Boolean"] = "Boolean";
+    ParamType["Object"] = "Object";
+    ParamType["Array"] = "Array";
+    ParamType["Any"] = "Any";
+})(ParamType || (exports.ParamType = ParamType = {}));

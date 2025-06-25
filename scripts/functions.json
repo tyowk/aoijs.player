@@ -1,0 +1,28 @@
+[
+    {
+        "name": "$playTrack",
+        "description": "Plays a track from a given url or search query.",
+        "all": "$playTrack[query;engine?;channel?]",
+        "example": "No example provided.",
+        "params": [
+            {
+                "name": "query",
+                "type": "string",
+                "required": true,
+                "description": "The query to search for."
+            },
+            {
+                "name": "engine?",
+                "type": "string",
+                "required": false,
+                "description": "The engine to use to search for."
+            },
+            {
+                "name": "channel?",
+                "type": "string",
+                "required": false,
+                "description": "The channel to play music."
+            }
+        ]
+    }
+]

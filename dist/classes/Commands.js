@@ -1,22 +1,17 @@
 "use strict";
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _Commands_instances, _Commands_bindEvents;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Commands = void 0;
 const Collective_1 = require("../utils/Collective");
-const { interpreter } = require('aoi.js/src/core/interpreter');
+const interpreter = require('aoi.js/src/core/interpreter');
 const Functions_1 = require("../utils/Functions");
 const node_path_1 = require("node:path");
 const node_fs_1 = require("node:fs");
 const discord_player_1 = require("discord-player");
 class Commands {
+    manager;
+    client;
+    events = [];
     constructor(manager, events) {
-        _Commands_instances.add(this);
-        this.events = [];
         this.manager = manager;
         this.client = manager.client;
         this.loadFunctions();
@@ -29,10 +24,40 @@ class Commands {
                     if (this[event] instanceof Collective_1.Collective)
                         continue;
                     this[event] = new Collective_1.Collective();
-                    __classPrivateFieldGet(this, _Commands_instances, "m", _Commands_bindEvents).call(this, event);
+                    this.#bindEvents(event);
                 }
             }
         }
+    }
+    #bindEvents(event) {
+        const commands = this[event];
+        if (!commands)
+            return this;
+        this.manager.player.events.on(event, async (queue, ...args) => {
+            for (const cmd of commands.values()) {
+                if (!cmd || !cmd.code)
+                    continue;
+                let guild = queue.guild;
+                const author = queue.currentTrack?.requestedBy ?? null;
+                let channel = queue.metadata.text;
+                const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
+                if (cmd.channel.includes('$') && cmd.channel !== '$') {
+                    channel =
+                        this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;
+                }
+                if (!channel)
+                    channel = queue.metadata.text;
+                if (!guild)
+                    guild = queue.guild;
+                await this.manager.player.context.provide({ guild }, async () => {
+                    await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
+                        queue,
+                        ...args
+                    });
+                });
+            }
+        });
+        return this;
     }
     loadFunctions(basePath = (0, node_path_1.join)(__dirname, '..', 'functions')) {
         const files = (0, node_fs_1.readdirSync)(basePath);
@@ -79,33 +104,3 @@ class Commands {
     }
 }
 exports.Commands = Commands;
-_Commands_instances = new WeakSet(), _Commands_bindEvents = function _Commands_bindEvents(event) {
-    const commands = this[event];
-    if (!commands)
-        return this;
-    this.manager.player.events.on(event, async (queue, ...args) => {
-        for (const cmd of commands.values()) {
-            if (!cmd || !cmd.code)
-                continue;
-            let guild = queue.guild;
-            const author = queue.currentTrack?.requestedBy ?? null;
-            let channel = queue.metadata.text;
-            const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
-            if (cmd.channel.includes('$') && cmd.channel !== '$') {
-                channel =
-                    this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;
-            }
-            if (!channel)
-                channel = queue.metadata.text;
-            if (!guild)
-                guild = queue.guild;
-            await this.manager.player.context.provide({ guild }, async () => {
-                await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
-                    queue,
-                    ...args
-                });
-            });
-        }
-    });
-    return this;
-};

@@ -1,5 +1,5 @@
 import { Functions } from '../../utils/Functions';
-import { ArgType } from '../../typings';
+import { ParamType } from '../../typings';
 import { useMainPlayer, type SearchQueryType } from 'discord-player';
 import { type VoiceBasedChannel, ChannelType } from 'discord.js';
 
@@ -13,19 +13,19 @@ export default class PlayTrack extends Functions {
                 {
                     name: 'query',
                     description: 'The query to search for.',
-                    type: ArgType.String,
+                    type: ParamType.String,
                     required: true
                 },
                 {
                     name: 'engine',
                     description: 'The engine to use to search for.',
-                    type: ArgType.String,
+                    type: ParamType.String,
                     required: false
                 },
                 {
                     name: 'channel',
                     description: 'The channel to play music.',
-                    type: ArgType.String,
+                    type: ParamType.String,
                     required: false
                 }
             ]

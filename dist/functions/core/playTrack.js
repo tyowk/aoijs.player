@@ -14,19 +14,19 @@ class PlayTrack extends Functions_1.Functions {
                 {
                     name: 'query',
                     description: 'The query to search for.',
-                    type: typings_1.ArgType.String,
+                    type: typings_1.ParamType.String,
                     required: true
                 },
                 {
                     name: 'engine',
                     description: 'The engine to use to search for.',
-                    type: typings_1.ArgType.String,
+                    type: typings_1.ParamType.String,
                     required: false
                 },
                 {
                     name: 'channel',
                     description: 'The channel to play music.',
-                    type: typings_1.ArgType.String,
+                    type: typings_1.ParamType.String,
                     required: false
                 }
             ]

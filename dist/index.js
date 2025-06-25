@@ -18,6 +18,6 @@ exports.Events = void 0;
 __exportStar(require("./classes"), exports);
 __exportStar(require("./utils"), exports);
 __exportStar(require("./typings"), exports);
-var discord_player_1 = require("discord-player");
+const discord_player_1 = require("discord-player");
 Object.defineProperty(exports, "Events", { enumerable: true, get: function () { return discord_player_1.GuildQueueEvent; } });
 __exportStar(require("discord-player"), exports);

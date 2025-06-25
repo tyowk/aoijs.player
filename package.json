@@ -1,26 +1,66 @@
 {
+    "$schema": "https://json.schemastore.org/package.json",
     "name": "aoijs.player",
     "version": "1.0.0",
+    "description": "An extension for aoi.js to play music in discord servers.",
+    "type": "commonjs",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "scripts": {
-        "build": "tsc -p tsconfig.json",
-        "format": "biome format src --write",
-        "lint": "biome lint src --fix",
-        "dev": "node dist/__test__"
-    },
+    "keywords": [
+        "aoi.js",
+        "aoijs.player",
+        "discord-player",
+        "aoi.music",
+        "music",
+        "discord",
+        "discord.js",
+        "bdfd",
+        "bot",
+        "extension"
+    ],
     "author": "Tyowk <tyowk@outlook.com>",
-    "license": "MIT",
-    "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
-        "aoi.js": "^6.10.3",
-        "discord-player-youtubei": "^1.4.6",
-        "typescript": "^5.8.3"
-    },
+    "license": "Apache-2.0",
     "dependencies": {
         "@discord-player/extractor": "^7.1.0",
         "discord-player": "^7.1.0",
+        "discord-player-soundcloud": "^1.0.7",
+        "discord-player-spotify": "^1.1.4",
+        "discord-player-youtubei": "^1.4.6"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.0.5",
+        "@typescript/native-preview": "^7.0.0-dev.20250625.1",
         "ffmpeg-static": "^5.2.0"
     },
-    "files": ["dist", "package.json", "README.md", "LICENSE"]
+    "peerDependencies": {
+        "aoi.js": "^6.10.3"
+    },
+    "homepage": "https://aoiplayer.vercel.app",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tyowk/aoijs.player.git"
+    },
+    "bugs": {
+        "url": "https://github.com/tyowk/aoijs.player/issues"
+    },
+    "files": [
+        "dist",
+        "typings",
+        "README.md",
+        "LICENSE",
+        "package.json"
+    ],
+    "engines": {
+        "node": ">=20.x",
+        "npm": ">=9.x"
+    },
+    "scripts": {
+        "build": "npm run pretty && npm run build:ts",
+        "build:ts": "npx tsgo -p tsconfig.json",
+        "lint": "biome lint --fix --config-path scripts/biome.json",
+        "format": "biome format --write --config-path scripts/biome.json",
+        "pretty": "npm run format && npm run lint",
+        "dev": "node tests",
+        "docgen": "node scripts/docgen.js"
+    }
 }
