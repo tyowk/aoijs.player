@@ -11,7 +11,7 @@ export declare class Manager {
     loadMulti(extractors: any[]): Manager;
     get cmd(): Commands;
     get options(): ManagerOptions;
-    get connectOptions(): ManagerOptions['connectOptions'];
+    get connectOptions(): Omit<ManagerOptions, 'youtube' | 'soundcloud' | 'spotify' | 'events'>;
     get events(): GuildQueueEvent[] | string[];
     get extractors(): ExtractorExecutionContext;
     get player(): Player;

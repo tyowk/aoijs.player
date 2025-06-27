@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Functions_1 = require("../../utils/Functions");
 const typings_1 = require("../../typings");
 const discord_player_1 = require("discord-player");
-const discord_js_1 = require("discord.js");
 class PlayTrack extends Functions_1.Functions {
     constructor() {
         super({
@@ -22,32 +21,21 @@ class PlayTrack extends Functions_1.Functions {
                     description: 'The engine to use to search for.',
                     type: typings_1.ParamType.String,
                     required: false
-                },
-                {
-                    name: 'channel',
-                    description: 'The channel to play music.',
-                    type: typings_1.ParamType.String,
-                    required: false
                 }
             ]
         });
     }
-    async execute(d, [query, engine = void 0, channel = void 0], data) {
-        const voiceChannel = channel
-            ? (d.client.channels.cache.get(channel) ?? (await d.client.channels.fetch(channel).catch(() => null)))
-            : d.member?.voice?.channel;
-        if (!voiceChannel)
-            return this.error('Invalid voice channel ID provided.');
-        if (voiceChannel.type !== discord_js_1.ChannelType.GuildVoice && voiceChannel.type !== discord_js_1.ChannelType.GuildStageVoice)
-            return this.error(`Invalid channel type: ${discord_js_1.ChannelType[voiceChannel.type]}, must be a voice or stage channel.`);
-        const player = (0, discord_player_1.useMainPlayer)();
+    async execute(d, [query, engine = 'youtube'], data) {
+        const queue = (0, discord_player_1.useQueue)(d.guild);
+        if (!queue)
+            return this.error('There are no active players in this guild.');
         const connectOptions = d.client.manager.connectOptions ?? {};
         const connectionOptionsUnion = {
             metadata: { text: d.channel },
             ...connectOptions
         };
         try {
-            await player.play(voiceChannel, query.addBrackets(), {
+            await queue.play(query.addBrackets(), {
                 nodeOptions: connectionOptionsUnion,
                 searchEngine: engine,
                 requestedBy: d.author

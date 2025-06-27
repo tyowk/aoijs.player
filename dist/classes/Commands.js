@@ -43,7 +43,10 @@ class Commands {
                 const member = guild && author ? (guild.members.cache.get(author.id) ?? null) : null;
                 if (cmd.channel.includes('$') && cmd.channel !== '$') {
                     channel =
-                        this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {}))?.code) ?? null;
+                        this.client.channels.cache.get((await interpreter(this.client, { guild, channel, member, author }, [], { code: cmd.channel, name: 'NameParser' }, undefined, true, undefined, {
+                            queue,
+                            other: args
+                        }))?.code) ?? null;
                 }
                 if (!channel)
                     channel = queue.metadata.text;
@@ -52,7 +55,7 @@ class Commands {
                 await this.manager.player.context.provide({ guild }, async () => {
                     await interpreter(this.client, { guild, channel, member, author }, [], cmd, undefined, false, channel, {
                         queue,
-                        ...args
+                        other: args
                     });
                 });
             }

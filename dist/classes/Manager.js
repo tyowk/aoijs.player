@@ -28,8 +28,8 @@ class Manager {
                 ...(options.youtube ?? {}).streamOptions
             }
         });
-        this.register(discord_player_soundcloud_1.SoundcloudExtractor, options.soundcloud ?? {});
         this.register(discord_player_spotify_1.SpotifyExtractor, options.spotify ?? {});
+        this.register(discord_player_soundcloud_1.SoundcloudExtractor, options.soundcloud ?? {});
         this.loadMulti(extractor_1.DefaultExtractors);
     }
     static create(client, options = {}) {
@@ -54,7 +54,8 @@ class Manager {
         return this.#options;
     }
     get connectOptions() {
-        return this.options.connectOptions;
+        const { youtube, soundcloud, spotify, events, ...options } = this.options;
+        return options;
     }
     get events() {
         return this.cmd.events ?? [];

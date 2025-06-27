@@ -62,8 +62,8 @@ export class Manager {
                 }
             }
         );
-        this.register(SoundcloudExtractor, options.soundcloud ?? {});
         this.register(SpotifyExtractor, options.spotify ?? {});
+        this.register(SoundcloudExtractor, options.soundcloud ?? {});
         this.loadMulti(DefaultExtractors);
     }
 
@@ -139,8 +139,9 @@ export class Manager {
      *
      * @returns {ManagerOptions['connectOptions']} The connect options for the manager.
      */
-    public get connectOptions(): ManagerOptions['connectOptions'] {
-        return this.options.connectOptions;
+    public get connectOptions(): Omit<ManagerOptions, 'youtube' | 'soundcloud' | 'spotify' | 'events'> {
+        const { youtube, soundcloud, spotify, events, ...options } = this.options;
+        return options;
     }
 
     /**

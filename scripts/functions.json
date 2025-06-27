@@ -1,8 +1,28 @@
 [
     {
+        "name": "$joinVC",
+        "description": "This function will make the bot join a voice channel and play music.",
+        "all": "$joinVC[channelId?;deaf?]",
+        "example": "No example provided.",
+        "params": [
+            {
+                "name": "channelId?",
+                "type": "string",
+                "required": false,
+                "description": "The channel ID to join."
+            },
+            {
+                "name": "deaf?",
+                "type": "string",
+                "required": false,
+                "description": "Whether to deaf the bot or not"
+            }
+        ]
+    },
+    {
         "name": "$playTrack",
         "description": "Plays a track from a given url or search query.",
-        "all": "$playTrack[query;engine?;channel?]",
+        "all": "$playTrack[query;engine?]",
         "example": "No example provided.",
         "params": [
             {
@@ -16,12 +36,6 @@
                 "type": "string",
                 "required": false,
                 "description": "The engine to use to search for."
-            },
-            {
-                "name": "channel?",
-                "type": "string",
-                "required": false,
-                "description": "The channel to play music."
             }
         ]
     }

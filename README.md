@@ -1,0 +1,1 @@
+### This package is not recommended anymore since youtube being youtube. Please use [`aoijs.lavalink`](https://github.com/tyowk/aoijs.lavalink) instead for a better experience and more features.

@@ -30,6 +30,7 @@
     "devDependencies": {
         "@biomejs/biome": "^2.0.5",
         "@typescript/native-preview": "^7.0.0-dev.20250625.1",
+        "aoi.js": "^6.10.3",
         "ffmpeg-static": "^5.2.0"
     },
     "peerDependencies": {
@@ -60,7 +61,7 @@
         "lint": "biome lint --fix --config-path scripts/biome.json",
         "format": "biome format --write --config-path scripts/biome.json",
         "pretty": "npm run format && npm run lint",
-        "dev": "node tests",
+        "dev": "node dist/_test_",
         "docgen": "node scripts/docgen.js"
     }
 }

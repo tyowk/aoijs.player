@@ -85,7 +85,10 @@ export class Commands {
                                     undefined,
                                     true,
                                     undefined,
-                                    {}
+                                    {
+                                        queue,
+                                        other: args
+                                    }
                                 )
                             )?.code
                         ) ?? null;
@@ -105,7 +108,7 @@ export class Commands {
                         channel,
                         {
                             queue,
-                            ...args
+                            other: args
                         }
                     );
                 });

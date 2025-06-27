@@ -28,8 +28,7 @@ export interface YoutubeOptions extends YoutubeiOptions {}
 /**
  * The manager options interface.
  */
-export interface ManagerOptions extends PlayerInitOptions {
-    connectOptions?: Omit<GuildNodeCreateOptions<unknown>, 'metadata'>;
+export interface ManagerOptions extends PlayerInitOptions, Omit<GuildNodeCreateOptions, 'metadata'> {
     events?: string[] | GuildQueueEvent[];
     youtube?: YoutubeOptions;
     soundcloud?: SoundcloudOptions;

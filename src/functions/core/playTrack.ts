@@ -1,7 +1,6 @@
 import { Functions } from '../../utils/Functions';
 import { ParamType } from '../../typings';
-import { useMainPlayer, type SearchQueryType } from 'discord-player';
-import { type VoiceBasedChannel, ChannelType } from 'discord.js';
+import { useQueue, type SearchQueryType } from 'discord-player';
 
 export default class PlayTrack extends Functions {
     constructor() {
@@ -21,12 +20,6 @@ export default class PlayTrack extends Functions {
                     description: 'The engine to use to search for.',
                     type: ParamType.String,
                     required: false
-                },
-                {
-                    name: 'channel',
-                    description: 'The channel to play music.',
-                    type: ParamType.String,
-                    required: false
                 }
             ]
         });
@@ -34,20 +27,11 @@ export default class PlayTrack extends Functions {
 
     public override async execute(
         d: any,
-        [query, engine = void 0, channel = void 0]: [string, string | undefined, string | undefined],
+        [query, engine = 'youtube']: [string, string | undefined],
         data: any
     ): Promise<any> {
-        const voiceChannel = channel
-            ? (d.client.channels.cache.get(channel) ?? (await d.client.channels.fetch(channel).catch(() => null)))
-            : d.member?.voice?.channel;
-
-        if (!voiceChannel) return this.error('Invalid voice channel ID provided.');
-        if (voiceChannel.type !== ChannelType.GuildVoice && voiceChannel.type !== ChannelType.GuildStageVoice)
-            return this.error(
-                `Invalid channel type: ${ChannelType[voiceChannel.type]}, must be a voice or stage channel.`
-            );
-
-        const player = useMainPlayer();
+        const queue = useQueue(d.guild);
+        if (!queue) return this.error('There are no active players in this guild.');
         const connectOptions = d.client.manager.connectOptions ?? {};
         const connectionOptionsUnion = {
             metadata: { text: d.channel },
@@ -55,7 +39,7 @@ export default class PlayTrack extends Functions {
         };
 
         try {
-            await player.play(<VoiceBasedChannel>voiceChannel, query.addBrackets(), {
+            await queue.play(query.addBrackets(), {
                 nodeOptions: connectionOptionsUnion,
                 searchEngine: engine as (SearchQueryType | `ext:${string}`) | undefined,
                 requestedBy: d.author
